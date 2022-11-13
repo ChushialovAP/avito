@@ -13,11 +13,13 @@ class EmployeesViewModel: NSObject {
                 self.fetchData(employees: employees)
             } else {
                 print(error!)
+                self.showError?(error!)
             }
         }
     }
     
     var reloadTableView: (() -> Void)?
+    var showError: ((String) -> Void)?
     
     var employeeCellViewModels = [EmployeeCellViewModel]() {
         didSet {

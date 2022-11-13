@@ -23,6 +23,19 @@ class EmployeesListViewController: UIViewController, UITableViewDelegate {
                 self?.employeesListTableView.reloadData()
             }
         }
+        viewModel.showError = { [weak self] error in
+            DispatchQueue.main.async {
+                self?.showError(error: error)
+            }
+        }
+    }
+    
+    func showError(error: String) {
+        let alert = UIAlertController(title: "Ошибка", message: error, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Try again", style: UIAlertAction.Style.default, handler: { _ in
+            self.viewModel.getEmployees()
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
