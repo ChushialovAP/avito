@@ -11,17 +11,21 @@ class EmployeesService: EmployeesServiceProtocol {
     
     func getEmployees(completion: @escaping (Bool, [Employee]?, String?) -> ()) {
         if let cached = cache[url] {
+            print("from cache")
             return completion(true, cached, nil)
         }
 
         HttpRequestHelper().GET(url: url, params: ["": ""], httpHeader: .application_json) { success, data in
             if success {
                 do {
-                    let employeesData = try JSONDecoder().decode([Employee].self, from: data!)
+                    let companyData = try JSONDecoder().decode(DataModel.self, from: data!)
+                    let employeesData = companyData.company.employees.sorted(by: {
+                        return $0.name < $1.name
+                    })
                     self.cache[self.url] = employeesData
                     completion(true, employeesData, nil)
                 } catch {
-                    completion(false, nil, "Error: Trying to parse Employees to model")
+                    completion(false, nil, "Error: Trying to parse Company to model")
                 }
             } else {
                 completion(false, nil, "Error: Employees GET Request failed")
